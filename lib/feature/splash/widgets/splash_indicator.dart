@@ -4,8 +4,17 @@ import 'package:skill_bridge/core/utils/app_scale.dart';
 
 class SplashIndicator extends StatelessWidget {
   final int activeDotIndex;
+  final double activeWidth;
+  final double activeHeight;
+  final int millisecond;
 
-  const SplashIndicator({super.key, required this.activeDotIndex});
+  const SplashIndicator({
+    super.key,
+    required this.activeDotIndex,
+    required this.activeWidth,
+    required this.activeHeight,
+    required this.millisecond,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,13 +25,13 @@ class SplashIndicator extends StatelessWidget {
         final bool isActive = index == activeDotIndex;
 
         return AnimatedContainer(
-          duration: const Duration(milliseconds: 800),
+          duration: Duration(milliseconds: millisecond),
           margin: EdgeInsets.all(5),
-          height: AppScale.dp(isActive ? 10 : 8),
-          width: AppScale.dp(isActive ? 10 : 8),
+          height: AppScale.dp(isActive ? activeHeight : 8),
+          width: AppScale.dp(isActive ? activeWidth : 8),
           decoration: BoxDecoration(
             color: isActive ? AppColors.kPrimary : AppColors.kSecondary,
-            shape: BoxShape.circle,
+            borderRadius: BorderRadius.circular(50),
           ),
         );
       }),

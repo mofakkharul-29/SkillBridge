@@ -3,6 +3,7 @@ import 'package:skill_bridge/core/theme/app_colors.dart';
 import 'package:skill_bridge/core/utils/app_scale.dart';
 import 'package:skill_bridge/core/utils/global_card.dart';
 import 'package:skill_bridge/core/utils/global_text.dart';
+import 'package:skill_bridge/core/utils/system_ui_helper.dart';
 import 'package:skill_bridge/feature/onboarding/widgets/footer_button.dart';
 import 'package:skill_bridge/feature/onboarding/widgets/indicator.dart';
 import 'package:skill_bridge/feature/onboarding/widgets/pages_builder_helper.dart';
@@ -22,8 +23,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   int _currentIndex = 0;
 
   @override
+  void initState() {
+    SystemUiHelper.hideStatusbar();
+    super.initState();
+  }
+
+  @override
   void dispose() {
     _controller.dispose();
+    SystemUiHelper.showStatusBar();
     super.dispose();
   }
 

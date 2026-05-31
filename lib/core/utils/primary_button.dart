@@ -26,13 +26,19 @@ class PrimaryButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadiusGeometry.circular(AppScale.dp(15)),
         ),
-        padding: EdgeInsets.symmetric(vertical: AppScale.dp(12.5)),
+        padding: EdgeInsets.symmetric(vertical: AppScale.dp(13.5)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          GlobalText(text: text, fontSize: AppScale.sp(16), height: 1.2),
+          GlobalText(
+            text: text,
+            fontSize: AppScale.sp(16),
+            height: 1.2,
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w600,
+          ),
           SizedBox(width: AppScale.dp(10)),
           Icon(icon, size: AppScale.sp(28)),
         ],

@@ -39,9 +39,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final onboardingState = ref.watch(onboardingStatusProvider);
-    final isLoading = onboardingState.isLoading;
-
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor,
       body: Stack(
@@ -113,15 +110,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           Indicator(currentIndex: _currentIndex),
 
           FooterButton(
-            text: _currentIndex < pages.length - 1
-                ? 'Next'
-                : isLoading
-                ? 'Loading...'
-                : 'Get Started',
+            text: _currentIndex < pages.length - 1 ? 'Next' : 'Get Started',
             icon: Icons.arrow_right_alt,
-            onPressed: isLoading
-                ? null
-                : _currentIndex < pages.length - 1
+            onPressed: _currentIndex < pages.length - 1
                 ? () {
                     _controller.nextPage(
                       duration: const Duration(milliseconds: 500),

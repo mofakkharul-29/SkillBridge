@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skill_bridge/core/routes/route_names.dart';
+import 'package:skill_bridge/core/routes/router_listenable.dart';
 import 'package:skill_bridge/feature/auth/presentation/auth_screen.dart';
 import 'package:skill_bridge/feature/home/presentation/home_screen.dart';
 import 'package:skill_bridge/feature/modeSelector/presentation/mode_selector.dart';
+import 'package:skill_bridge/feature/modeSelector/provider/role_notifier_provider.dart';
+import 'package:skill_bridge/feature/modeSelector/widget/user_role.dart';
 import 'package:skill_bridge/feature/onboarding/presentation/onboarding_screen.dart';
+import 'package:skill_bridge/feature/onboarding/provider/onboarding_status_provider.dart';
 import 'package:skill_bridge/feature/splash/presentation/splash_screen.dart';
+import 'package:skill_bridge/feature/splash/provider/splash_update_status.dart';
 
 class RouterConfiguration {
   static final routerProvider = Provider<GoRouter>((ref) {
@@ -14,28 +19,43 @@ class RouterConfiguration {
       debugLabel: 'root',
     );
 
+    final listenable = RouterListenable(ref);
+
     return GoRouter(
       initialLocation: '/splash',
       navigatorKey: rootNavigatorKey,
+      refreshListenable: listenable,
       debugLogDiagnostics: true,
 
       redirect: (context, state) {
-        final fullPath = state.fullPath;
-        final currentPath = state.uri.path;
-        final matched = state.matchedLocation;
+        final loc = state.matchedLocation;
 
-        debugPrint(
-          'full path: $fullPath\ncurrentPath: $currentPath\nmatched: $matched',
-        );
+        final bool isSplashDone = ref.read(splashUpdateStatus);
 
-        if (currentPath != '/splash') {
-          return '/splash';
-        } 
+        final isFirstLaunched = ref
+            .read(onboardingStatusProvider.notifier)
+            .isFirstLauncheSafe;
 
-        
+        final selectedUser =
+            ref.read(roleNotifierProvider).value ?? UserRole.unselected;
 
-        return null;
-        
+        if (!isSplashDone) {
+          return loc == '/splash' ? null : '/splash';
+        }
+
+        if (isFirstLaunched) {
+          return loc == '/onboarding' ? null : '/onboarding';
+        }
+
+        if (selectedUser == UserRole.unselected) {
+          return loc == '/role' ? null : '/role';
+        }
+
+        final isAuthenticated = false; // remove this later
+
+        if (!isAuthenticated) {
+          return loc == '/auth' ? null : '/auth';
+        }
       },
 
       routes: <RouteBase>[

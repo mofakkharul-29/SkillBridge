@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:skill_bridge/core/enums/user_role.dart';
 import 'package:skill_bridge/core/theme/app_colors.dart';
 import 'package:skill_bridge/core/utils/app_scale.dart';
 import 'package:skill_bridge/core/utils/global_card.dart';
@@ -7,7 +8,6 @@ import 'package:skill_bridge/core/utils/global_text.dart';
 import 'package:skill_bridge/core/utils/primary_button.dart';
 import 'package:skill_bridge/feature/modeSelector/provider/role_notifier_provider.dart';
 import 'package:skill_bridge/feature/modeSelector/provider/temp_select_role_provider.dart';
-import 'package:skill_bridge/feature/modeSelector/widget/user_role.dart';
 
 class ModeSelector extends ConsumerWidget {
   const ModeSelector({super.key});

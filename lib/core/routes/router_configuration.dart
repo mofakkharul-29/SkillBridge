@@ -7,7 +7,7 @@ import 'package:skill_bridge/feature/auth/presentation/auth_screen.dart';
 import 'package:skill_bridge/feature/home/presentation/home_screen.dart';
 import 'package:skill_bridge/feature/modeSelector/presentation/mode_selector.dart';
 import 'package:skill_bridge/feature/modeSelector/provider/role_notifier_provider.dart';
-import 'package:skill_bridge/feature/modeSelector/widget/user_role.dart';
+import 'package:skill_bridge/core/enums/user_role.dart';
 import 'package:skill_bridge/feature/onboarding/presentation/onboarding_screen.dart';
 import 'package:skill_bridge/feature/onboarding/provider/onboarding_status_provider.dart';
 import 'package:skill_bridge/feature/splash/presentation/splash_screen.dart';

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:skill_bridge/feature/modeSelector/widget/user_role.dart';
+import 'package:skill_bridge/core/enums/user_role.dart';
 
 class RoleNotifier extends AsyncNotifier<UserRole> {
   late SharedPreferences _pre;
@@ -25,5 +25,10 @@ class RoleNotifier extends AsyncNotifier<UserRole> {
     } catch (e, st) {
       state = AsyncError(e, st);
     }
+  }
+
+  Future<void> clearRole() async {
+    await _pre.remove('userRole');
+    state = const AsyncData(UserRole.unselected);
   }
 }

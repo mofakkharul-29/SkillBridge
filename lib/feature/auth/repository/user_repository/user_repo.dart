@@ -25,7 +25,7 @@ class UserRepo {
       final doc = await _userDoc(uid).get();
 
       if (!doc.exists || doc.data() == null) {
-        throw const UserRepoException(
+        throw UserRepoException(
           code: 'user-not-found',
           message: 'User document does not exist',
         );
@@ -64,7 +64,7 @@ class UserRepo {
   Stream<AppUser> watchUser(String uid) {
     return _userDoc(uid).snapshots().map((doc) {
       if (!doc.exists || doc.data() == null) {
-        throw const UserRepoException(
+        throw UserRepoException(
           code: 'user-not-found',
           message: 'User document does not exist',
         );

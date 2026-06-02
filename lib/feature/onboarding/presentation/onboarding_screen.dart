@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skill_bridge/core/theme/app_colors.dart';
 import 'package:skill_bridge/core/utils/app_scale.dart';
 import 'package:skill_bridge/core/utils/global_card.dart';
 import 'package:skill_bridge/core/utils/global_text.dart';
 import 'package:skill_bridge/core/utils/system_ui_helper.dart';
+import 'package:skill_bridge/feature/onboarding/provider/onboarding_status_provider.dart';
 import 'package:skill_bridge/feature/onboarding/widgets/footer_button.dart';
 import 'package:skill_bridge/feature/onboarding/widgets/indicator.dart';
 import 'package:skill_bridge/feature/onboarding/widgets/pages_builder_helper.dart';
 import 'package:skill_bridge/feature/onboarding/widgets/pages_item.dart';
 import 'package:skill_bridge/feature/onboarding/widgets/skip_button.dart';
 
-class OnboardingScreen extends StatefulWidget {
+class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
 
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final PageController _controller = PageController();
   final List<PagesItem> pages = PageBuilderHelper.pages;
   int _currentIndex = 0;
@@ -37,6 +39,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final onboardingState = ref.watch(onboardingStatusProvider);
+    final isLoading = onboardingState.isLoading;
+
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor,
       body: Stack(
@@ -108,17 +113,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           Indicator(currentIndex: _currentIndex),
 
           FooterButton(
-            text: _currentIndex < pages.length - 1 ? 'Next' : 'Get Started',
+            text: _currentIndex < pages.length - 1
+                ? 'Next'
+                : isLoading
+                ? 'Loading...'
+                : 'Get Started',
             icon: Icons.arrow_right_alt,
-            onPressed: _currentIndex < pages.length - 1
+            onPressed: isLoading
+                ? null
+                : _currentIndex < pages.length - 1
                 ? () {
                     _controller.nextPage(
                       duration: const Duration(milliseconds: 500),
                       curve: Curves.easeInOut,
                     );
                   }
-                : () {
-                    // update onboarding status
+                : () async {
+                    await ref
+                        .read(onboardingStatusProvider.notifier)
+                        .completeOnboarding();
                   },
           ),
 

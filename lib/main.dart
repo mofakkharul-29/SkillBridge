@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skill_bridge/core/routes/router_configuration.dart';
 import 'package:skill_bridge/core/utils/app_scale.dart';
-import 'package:skill_bridge/feature/splash/presentation/splash_screen.dart';
+import 'package:skill_bridge/feature/modeSelector/presentation/mode_selector.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,9 +24,9 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       title: 'SkillBridge',
       theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
-      home: const SplashScreen(),
+      // home: const SplashScreen(),
       // home: const OnboardingScreen(),
-      // home: const ModeSelector(),
+      home: const ModeSelector(),
     );
 
     // return MaterialApp.router(

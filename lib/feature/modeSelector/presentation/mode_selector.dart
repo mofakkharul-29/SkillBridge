@@ -1,29 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skill_bridge/core/theme/app_colors.dart';
 import 'package:skill_bridge/core/utils/app_scale.dart';
 import 'package:skill_bridge/core/utils/global_card.dart';
 import 'package:skill_bridge/core/utils/global_text.dart';
 import 'package:skill_bridge/core/utils/primary_button.dart';
+import 'package:skill_bridge/feature/modeSelector/provider/role_notifier_provider.dart';
+import 'package:skill_bridge/feature/modeSelector/provider/temp_select_role_provider.dart';
 import 'package:skill_bridge/feature/modeSelector/widget/user_role.dart';
 
-class ModeSelector extends StatefulWidget {
+class ModeSelector extends ConsumerWidget {
   const ModeSelector({super.key});
 
   @override
-  State<ModeSelector> createState() => _ModeSelectorState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final activeRole = ref.watch(selectRoleProvider);
 
-class _ModeSelectorState extends State<ModeSelector> {
-  late UserRole activeRole;
-
-  @override
-  void initState() {
-    activeRole = UserRole.unselected;
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Padding(
@@ -47,10 +39,9 @@ class _ModeSelectorState extends State<ModeSelector> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        activeRole = UserRole.student;
-                      });
+                    onTap: () async {
+                      ref.read(selectRoleProvider.notifier).state =
+                          UserRole.student;
                     },
                     child: getCard(
                       title: 'Student',
@@ -61,10 +52,9 @@ class _ModeSelectorState extends State<ModeSelector> {
                   ),
 
                   GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        activeRole = UserRole.teacher;
-                      });
+                    onTap: () async {
+                      ref.read(selectRoleProvider.notifier).state =
+                          UserRole.teacher;
                     },
                     child: getCard(
                       title: 'Teacher',
@@ -75,15 +65,18 @@ class _ModeSelectorState extends State<ModeSelector> {
                   ),
                 ],
               ),
+
               SizedBox(height: AppScale.dp(50)),
 
               PrimaryButton(
                 text: 'Continue',
                 icon: null,
-                onPressed:
-                    (activeRole == UserRole.student ||
-                        activeRole == UserRole.teacher)
-                    ? () {}
+                onPressed: activeRole != UserRole.unselected
+                    ? () async {
+                        await ref
+                            .read(roleNotifierProvider.notifier)
+                            .setUserRole(activeRole);
+                      }
                     : null,
               ),
             ],
@@ -115,7 +108,6 @@ class _ModeSelectorState extends State<ModeSelector> {
       borderRadius: BorderRadius.circular(20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.min,
         children: [
           CircleAvatar(
             backgroundColor: isSelected

@@ -1,21 +1,23 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skill_bridge/core/theme/app_colors.dart';
 import 'package:skill_bridge/core/utils/app_scale.dart';
 import 'package:skill_bridge/core/utils/global_text.dart';
 import 'package:skill_bridge/core/utils/system_ui_helper.dart';
+import 'package:skill_bridge/feature/splash/provider/splash_update_status.dart';
 import 'package:skill_bridge/feature/splash/widgets/header_section.dart';
 import 'package:skill_bridge/feature/splash/widgets/splash_indicator.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen> {
   int _activeDotIndex = 0;
   late Timer _timer;
 
@@ -25,6 +27,12 @@ class _SplashScreenState extends State<SplashScreen> {
       setState(() {
         _activeDotIndex = (_activeDotIndex + 1) % 3;
       });
+    });
+
+    Future.delayed(const Duration(seconds: 3), () {
+      if (!mounted) return;
+
+      ref.read(splashUpdateStatus.notifier).state = true;
     });
     SystemUiHelper.hideStatusbar();
     super.initState();

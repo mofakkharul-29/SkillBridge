@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:skill_bridge/core/enums/user_role.dart';
 import 'package:skill_bridge/core/routes/route_names.dart';
 import 'package:skill_bridge/core/routes/router_listenable.dart';
 import 'package:skill_bridge/feature/auth/presentation/auth_screen.dart';
 import 'package:skill_bridge/feature/home/presentation/home_screen.dart';
 import 'package:skill_bridge/feature/modeSelector/presentation/mode_selector.dart';
 import 'package:skill_bridge/feature/modeSelector/provider/role_notifier_provider.dart';
-import 'package:skill_bridge/core/enums/user_role.dart';
 import 'package:skill_bridge/feature/onboarding/presentation/onboarding_screen.dart';
 import 'package:skill_bridge/feature/onboarding/provider/onboarding_status_provider.dart';
 import 'package:skill_bridge/feature/splash/presentation/splash_screen.dart';
 import 'package:skill_bridge/feature/splash/provider/splash_update_status.dart';
 
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey(
+  debugLabel: 'root',
+);
+
 class RouterConfiguration {
   static final routerProvider = Provider<GoRouter>((ref) {
-    final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey(
-      debugLabel: 'root',
-    );
-
     final listenable = RouterListenable(ref);
 
     return GoRouter(

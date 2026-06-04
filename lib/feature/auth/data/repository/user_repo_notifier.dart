@@ -8,14 +8,14 @@ import 'package:skill_bridge/feature/auth/provider/user_repo_provider.dart';
 
 class UserRepoNotifier extends AsyncNotifier<AppUser?> {
   late UserRepo _repo;
-  late StreamSubscription<AppUser?> _userSubscription;
+  StreamSubscription<AppUser>? _userSubscription;
 
   @override
   Future<AppUser?> build() async {
     _repo = ref.watch(userRepoProvider);
 
     ref.onDispose(() {
-      _userSubscription.cancel();
+      _userSubscription?.cancel();
     });
 
     return null;
@@ -62,7 +62,7 @@ class UserRepoNotifier extends AsyncNotifier<AppUser?> {
   }
 
   void watchUser(String uid) {
-    _userSubscription.cancel();
+    _userSubscription?.cancel();
     state = const AsyncLoading();
     _userSubscription = _repo
         .watchUser(uid)

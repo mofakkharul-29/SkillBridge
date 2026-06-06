@@ -14,3 +14,5 @@ A notifier method should never return a Stream to the outside. The notifier's jo
 6. Cancel before new → always cancel existing subscription before starting new one
 
 // above is about user repo
+
+1. after doing user.updateDisplayName() don't use fullName: user.fullname cause chages reflect on next fetch , cause user object stored in local devices

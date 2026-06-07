@@ -5,7 +5,18 @@ import 'package:skill_bridge/core/utils/global_card.dart';
 import 'package:skill_bridge/core/utils/global_text.dart';
 
 class HeaderSection extends StatelessWidget {
-  const HeaderSection({super.key});
+  final double height;
+  final double width;
+  final double iconSize;
+  final double fontSize;
+
+  const HeaderSection({
+    super.key,
+    this.height = 60,
+    this.width = 60,
+    this.iconSize = 35,
+    this.fontSize = 34,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -14,15 +25,15 @@ class HeaderSection extends StatelessWidget {
       children: [
         GlobalCard(
           alignment: Alignment.center,
-          height: AppScale.dp(60),
-          width: AppScale.dp(60),
+          height: AppScale.dp(height),
+          width: AppScale.dp(width),
           color: AppColors.kPrimary,
           borderRadius: BorderRadius.circular(AppScale.dp(15)),
           padding: EdgeInsets.all(AppScale.dp(5.5)),
           child: Icon(
             Icons.school_outlined,
             color: AppColors.scaffoldBgColor,
-            size: AppScale.dp(35),
+            size: AppScale.dp(iconSize),
           ),
         ),
 
@@ -31,7 +42,7 @@ class HeaderSection extends StatelessWidget {
         GlobalText(
           text: 'SkillBridge',
           color: AppColors.kPrimary,
-          fontSize: AppScale.sp(34),
+          fontSize: AppScale.sp(fontSize),
           fontFamily: 'Poppins',
           fontWeight: FontWeight.w700,
           height: 1.5,

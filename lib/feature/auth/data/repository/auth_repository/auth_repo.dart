@@ -9,7 +9,7 @@ class AuthRepo {
 
   const AuthRepo(this._auth);
 
-  Future<AppUser?> registerWithEmailPassword({
+  Future<AppUser> registerWithEmailPassword({
     required String email,
     required String password,
     required String fullName,

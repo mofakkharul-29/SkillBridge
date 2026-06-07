@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:skill_bridge/core/enums/user_role.dart';
+import 'package:skill_bridge/feature/auth/exceptions/auth_repo_exception.dart';
 import 'package:skill_bridge/feature/auth/model/app_user.dart';
 
 class AuthRepo {
@@ -21,7 +22,10 @@ class AuthRepo {
 
       final User? user = credential.user;
       if (user == null) {
-        throw Exception('user-creation-failed');
+        throw AuthRepoException(
+          code: 'user-creation-failed',
+          message: 'User creation returned null',
+        );
       }
 
       await user.updateDisplayName(fullName);
@@ -35,10 +39,12 @@ class AuthRepo {
         photoUrl: null,
         createdAt: DateTime.now(),
       );
+    } on AuthRepoException {
+      rethrow;
     } on FirebaseAuthException catch (e) {
-      throw Exception(e);
+      throw AuthRepoException(code: e.code, message: e.message ?? '');
     } catch (e) {
-      throw Exception(e);
+      throw AuthRepoException(code: 'unknown', message: e.toString());
     }
   }
 
@@ -54,14 +60,19 @@ class AuthRepo {
 
       final User? user = credential.user;
       if (user == null) {
-        throw Exception('login-failed');
+        throw AuthRepoException(
+          code: 'firebase-user-null',
+          message: 'Login returned null user',
+        );
       }
 
       return user.uid;
+    } on AuthRepoException {
+      rethrow;
     } on FirebaseAuthException catch (e) {
-      throw Exception(e);
+      throw AuthRepoException(code: e.code, message: e.message ?? '');
     } catch (e) {
-      throw Exception(e);
+      throw AuthRepoException(code: 'unknown', message: e.toString());
     }
   }
 
@@ -79,7 +90,12 @@ class AuthRepo {
           .authorizeScopes(scopes);
 
       final String? idToken = googleUser.authentication.idToken;
-      if (idToken == null) throw Exception('id-token-missing');
+      if (idToken == null) {
+        throw AuthRepoException(
+          code: 'id-token-missing',
+          message: 'Google idToken was null',
+        );
+      }
 
       final OAuthCredential credential = GoogleAuthProvider.credential(
         accessToken: clientAuth.accessToken,
@@ -90,13 +106,20 @@ class AuthRepo {
       );
 
       final User? user = userCredential.user;
-      if (user == null) throw Exception('firebase-user-null');
+      if (user == null) {
+        throw AuthRepoException(
+          code: 'firebase-user-null',
+          message: 'Google sign in returned null user',
+        );
+      }
 
       return user.uid;
+    } on AuthRepoException {
+      rethrow;
     } on FirebaseAuthException catch (e) {
-      throw Exception(e);
+      throw AuthRepoException(code: e.code, message: e.message ?? '');
     } catch (e) {
-      throw Exception(e);
+      throw AuthRepoException(code: 'unknown', message: e.toString());
     }
   }
 
@@ -104,22 +127,29 @@ class AuthRepo {
     try {
       await Future.wait([_auth.signOut(), GoogleSignIn.instance.signOut()]);
     } on FirebaseAuthException catch (e) {
-      throw Exception(e);
+      throw AuthRepoException(code: e.code, message: e.message ?? '');
     } catch (e) {
-      throw Exception(e);
+      throw AuthRepoException(code: 'unknown', message: e.toString());
     }
   }
 
   Future<String> deleteAccount() async {
     try {
       final uid = _auth.currentUser?.uid;
-      if (uid == null) throw Exception('there is no such user');
+      if (uid == null) {
+        throw AuthRepoException(
+          code: 'no-current-user',
+          message: 'No authenticated user found',
+        );
+      }
       await _auth.currentUser!.delete();
       return uid;
+    } on AuthRepoException {
+      rethrow;
     } on FirebaseAuthException catch (e) {
-      throw Exception(e);
+      throw AuthRepoException(code: e.code, message: e.message ?? '');
     } catch (e) {
-      throw Exception(e);
+      throw AuthRepoException(code: 'unknown', message: e.toString());
     }
   }
 }

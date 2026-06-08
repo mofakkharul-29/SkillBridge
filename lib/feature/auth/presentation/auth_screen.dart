@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:skill_bridge/core/theme/app_colors.dart';
 import 'package:skill_bridge/core/utils/app_scale.dart';
 import 'package:skill_bridge/core/utils/app_text_form_field.dart';
+import 'package:skill_bridge/core/utils/custom_devider.dart';
+import 'package:skill_bridge/core/utils/global_text.dart';
+import 'package:skill_bridge/core/utils/primary_button.dart';
+import 'package:skill_bridge/core/utils/primary_text_button.dart';
+import 'package:skill_bridge/feature/auth/widget/footer.dart';
 import 'package:skill_bridge/feature/splash/widgets/header_section.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -46,9 +51,21 @@ class _AuthScreenState extends State<AuthScreen> {
           child: Column(
             children: [
               HeaderSection(fontSize: 28, iconSize: 30, height: 45, width: 45),
-              SizedBox(height: AppScale.dp(20)),
+
+              SizedBox(height: AppScale.dp(30)),
+
+              GlobalText(
+                text: 'Create Account',
+                fontFamily: 'Poppins',
+                fontSize: AppScale.sp(30),
+                fontWeight: FontWeight.w800,
+                height: AppScale.dp(1.5),
+              ),
+
+              SizedBox(height: AppScale.dp(30)),
               Form(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     AppTextFormField(
                       labelText: 'Full name',
@@ -80,7 +97,45 @@ class _AuthScreenState extends State<AuthScreen> {
                       focusNode: _confirmPassFocus,
                     ),
 
-                    SizedBox(height: AppScale.dp(16)),
+                    SizedBox(height: AppScale.dp(4)),
+
+                    PrimaryTextButton(
+                      text: 'Forgot password?',
+                      onPressed: () {
+                        debugPrint('tapped');
+                      },
+                    ),
+                    SizedBox(height: AppScale.dp(4)),
+
+                    PrimaryButton(
+                      text: 'Sign Up',
+                      icon: Icons.login,
+                      iconSize: 25,
+                      vtPadding: 16,
+                      textFont: 17,
+                      onPressed: () {},
+                    ),
+
+                    SizedBox(height: AppScale.dp(35)),
+
+                    const CustomDevider(),
+
+                    SizedBox(height: AppScale.dp(25)),
+
+                    PrimaryButton(
+                      text: 'Sign in with Google',
+                      isNeed: false,
+                      isPrefixNeed: true,
+                      vtPadding: 16,
+                      textFont: 17,
+                      backgroundColor: const Color(0xFFEEEEEE),
+                      foregroundColor: const Color(0xDD000000),
+                      onPressed: () {},
+                    ),
+
+                    SizedBox(height: AppScale.dp(20)),
+
+                    const Footer(),
                   ],
                 ),
               ),

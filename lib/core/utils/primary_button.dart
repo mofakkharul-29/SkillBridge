@@ -7,12 +7,26 @@ class PrimaryButton extends StatelessWidget {
   final String text;
   final IconData? icon;
   final void Function()? onPressed;
+  final double iconSize;
+  final double vtPadding;
+  final double textFont;
+  final bool isNeed;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
+  final bool isPrefixNeed;
 
   const PrimaryButton({
     super.key,
     required this.text,
     this.onPressed,
     this.icon,
+    this.iconSize = 28,
+    this.vtPadding = 13.5,
+    this.textFont = 16,
+    this.isNeed = true,
+    this.backgroundColor = AppColors.kPrimary,
+    this.foregroundColor = Colors.white,
+    this.isPrefixNeed = false,
   });
 
   @override
@@ -21,26 +35,39 @@ class PrimaryButton extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         alignment: Alignment.center,
-        foregroundColor: Colors.white,
-        backgroundColor: AppColors.kPrimary,
+        foregroundColor: foregroundColor,
+        backgroundColor: backgroundColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadiusGeometry.circular(AppScale.dp(15)),
         ),
-        padding: EdgeInsets.symmetric(vertical: AppScale.dp(13.5)),
+        padding: EdgeInsets.symmetric(vertical: AppScale.dp(vtPadding)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          isPrefixNeed
+              ? Image.asset(
+                  'assets/images/google.png',
+                  fit: BoxFit.contain,
+                  height: AppScale.dp(22),
+                  width: AppScale.dp(22),
+                )
+              : const SizedBox.shrink(),
+
+          isPrefixNeed ? SizedBox(width: AppScale.dp(15)) : SizedBox.shrink(),
+
           GlobalText(
             text: text,
-            fontSize: AppScale.sp(16),
+            fontSize: AppScale.sp(textFont),
             height: 1.2,
             fontFamily: 'Inter',
             fontWeight: FontWeight.w600,
           ),
           SizedBox(width: AppScale.dp(10)),
-          Icon(icon, size: AppScale.sp(28)),
+          isNeed
+              ? Icon(icon, size: AppScale.sp(iconSize))
+              : const SizedBox.shrink(),
         ],
       ),
     );

@@ -3,10 +3,9 @@ import 'package:flutter/cupertino.dart';
 class PreCacheManager {
   static const List<String> images = ['assets/images/google.png'];
 
-  static void _loadImage({
-    required BuildContext context,
-    required ImageProvider<Object> provider,
-  }) {
-    images.map((i) => precacheImage(provider, context));
+  static Future<void> preloadImages(BuildContext context) async {
+    await Future.wait(
+      images.map((path) => precacheImage(AssetImage(path), context)),
+    );
   }
 }

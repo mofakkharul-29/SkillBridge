@@ -4,7 +4,10 @@ import 'package:skill_bridge/core/utils/global_text.dart';
 import 'package:skill_bridge/core/utils/primary_text_button.dart';
 
 class Footer extends StatelessWidget {
-  const Footer({super.key});
+  final bool isLogin;
+  final void Function()? onPressed;
+
+  const Footer({super.key, required this.isLogin, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +15,9 @@ class Footer extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         GlobalText(
-          text: 'Already have an account?',
+          text: isLogin
+              ? 'Don\'t have an account? '
+              : 'Already have an account?',
           textAlign: TextAlign.center,
           fontFamily: 'Inter',
           fontSize: AppScale.sp(16),
@@ -20,7 +25,10 @@ class Footer extends StatelessWidget {
           color: const Color(0xFF616161),
         ),
         SizedBox(width: AppScale.dp(6)),
-        PrimaryTextButton(text: 'Log In', onPressed: () {}),
+        PrimaryTextButton(
+          text: isLogin ? 'Sign up' : 'Log In',
+          onPressed: onPressed,
+        ),
       ],
     );
   }

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skill_bridge/core/theme/app_colors.dart';
 import 'package:skill_bridge/core/utils/app_scale.dart';
 import 'package:skill_bridge/core/utils/global_text.dart';
+import 'package:skill_bridge/core/utils/pre_cache_manager.dart';
 import 'package:skill_bridge/core/utils/system_ui_helper.dart';
 import 'package:skill_bridge/feature/splash/provider/splash_update_status.dart';
 import 'package:skill_bridge/feature/splash/widgets/header_section.dart';
@@ -23,6 +24,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   void initState() {
+    super.initState();
+
     _timer = Timer.periodic(const Duration(milliseconds: 900), (_) {
       setState(() {
         _activeDotIndex = (_activeDotIndex + 1) % 3;
@@ -35,7 +38,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       ref.read(splashUpdateStatus.notifier).state = true;
     });
     SystemUiHelper.hideStatusbar();
-    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    PreCacheManager.preloadImages(context);
   }
 
   @override

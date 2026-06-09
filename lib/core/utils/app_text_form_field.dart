@@ -12,6 +12,7 @@ class AppTextFormField extends StatelessWidget {
   final String? labelText;
   final IconData? suffixIcon;
   final String? errorText;
+  final void Function()? onObsecureTap;
 
   const AppTextFormField({
     super.key,
@@ -25,6 +26,7 @@ class AppTextFormField extends StatelessWidget {
     this.labelText,
     this.suffixIcon,
     this.errorText,
+    this.onObsecureTap,
   });
 
   @override
@@ -37,7 +39,7 @@ class AppTextFormField extends StatelessWidget {
       obscureText: obscureText,
       onChanged: onChanged,
       onTapOutside: (_) {
-        focusNode?.unfocus();
+        FocusScope.of(context).unfocus();
       },
       onSaved: onSaved,
       style: TextStyle(
@@ -73,7 +75,11 @@ class AppTextFormField extends StatelessWidget {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: const Color(0xFFC7C6C6)),
+          borderSide: BorderSide(color: const Color(0xFFEB4646)),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: const Color(0xFFEB4646)),
         ),
         filled: true,
         fillColor: const Color(0xFFF5F5F5),
@@ -81,7 +87,9 @@ class AppTextFormField extends StatelessWidget {
           fontFamily: 'Inter',
           color: Color(0xDD000000),
         ),
-        suffixIcon: Icon(suffixIcon),
+        suffixIcon: suffixIcon != null
+            ? IconButton(icon: Icon(suffixIcon), onPressed: onObsecureTap)
+            : null,
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skill_bridge/core/theme/app_colors.dart';
 import 'package:skill_bridge/core/utils/app_scale.dart';
 import 'package:skill_bridge/core/utils/app_text_form_field.dart';
@@ -6,43 +7,18 @@ import 'package:skill_bridge/core/utils/custom_devider.dart';
 import 'package:skill_bridge/core/utils/global_text.dart';
 import 'package:skill_bridge/core/utils/primary_button.dart';
 import 'package:skill_bridge/core/utils/primary_text_button.dart';
+import 'package:skill_bridge/feature/auth/provider/form_notifier_provider.dart';
 import 'package:skill_bridge/feature/auth/widget/footer.dart';
 import 'package:skill_bridge/feature/splash/widgets/header_section.dart';
 
-class AuthScreen extends StatefulWidget {
+class AuthScreen extends ConsumerWidget {
   const AuthScreen({super.key});
 
   @override
-  State<AuthScreen> createState() => _AuthScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final formState = ref.watch(formNotifierProvider);
+    final form = ref.read(formNotifierProvider.notifier);
 
-class _AuthScreenState extends State<AuthScreen> {
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passController = TextEditingController();
-  final TextEditingController _confirmPassController = TextEditingController();
-
-  final FocusNode _nameFocus = FocusNode();
-  final FocusNode _emailFocus = FocusNode();
-  final FocusNode _passFocus = FocusNode();
-  final FocusNode _confirmPassFocus = FocusNode();
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _passController.dispose();
-    _confirmPassController.dispose();
-
-    _nameFocus.dispose();
-    _emailFocus.dispose();
-    _passFocus.dispose();
-    _confirmPassFocus.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor,
       body: Center(
@@ -55,7 +31,7 @@ class _AuthScreenState extends State<AuthScreen> {
               SizedBox(height: AppScale.dp(30)),
 
               GlobalText(
-                text: 'Create Account',
+                text: formState.isLogin ? 'Welcome Back!' : 'Create Account',
                 fontFamily: 'Poppins',
                 fontSize: AppScale.sp(30),
                 fontWeight: FontWeight.w800,
@@ -67,53 +43,75 @@ class _AuthScreenState extends State<AuthScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    AppTextFormField(
-                      labelText: 'Full name',
-                      controller: _nameController,
-                      focusNode: _nameFocus,
-                    ),
-
-                    SizedBox(height: AppScale.dp(16)),
+                    if (!formState.isLogin) ...[
+                      AppTextFormField(
+                        labelText: 'Full name',
+                        controller: form.nameController,
+                        focusNode: form.nameFocus,
+                        errorText: formState.nameError,
+                        onChanged: form.validateName,
+                      ),
+                      SizedBox(height: AppScale.dp(16)),
+                    ],
 
                     AppTextFormField(
                       labelText: 'Email',
-                      controller: _emailController,
-                      focusNode: _emailFocus,
+                      controller: form.emailController,
+                      focusNode: form.emailFocus,
+                      errorText: formState.emailError,
+                      onChanged: form.validateEmail,
                     ),
 
                     SizedBox(height: AppScale.dp(16)),
 
                     AppTextFormField(
                       labelText: 'Password',
-                      controller: _passController,
-                      focusNode: _passFocus,
+                      controller: form.passController,
+                      focusNode: form.passFocus,
+                      obscureText: !formState.isPasswordVisible,
+                      suffixIcon: formState.isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      errorText: formState.passwordError,
+                      onChanged: form.validatePassword,
+                      onObsecureTap: form.togglePasswordVisibility,
                     ),
 
-                    SizedBox(height: AppScale.dp(16)),
+                    if (!formState.isLogin) ...[
+                      SizedBox(height: AppScale.dp(16)),
+                      AppTextFormField(
+                        labelText: 'Confirm password',
+                        controller: form.confirmPassController,
+                        focusNode: form.confirmPassFocus,
+                        obscureText: !formState.isConfirmPasswordVisible,
+                        suffixIcon: formState.isConfirmPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        errorText: formState.confirmPasswordError,
+                        onChanged: form.validateConfirmPassword,
+                        onObsecureTap: form.toggleConfirmPasswordVisibility,
+                      ),
+                      SizedBox(height: AppScale.dp(4)),
+                    ],
 
-                    AppTextFormField(
-                      labelText: 'Confirm password',
-                      controller: _confirmPassController,
-                      focusNode: _confirmPassFocus,
-                    ),
+                    if (formState.isLogin) ...[
+                      PrimaryTextButton(
+                        text: 'Forgot password?',
+                        onPressed: () => debugPrint('tapped'),
+                      ),
+                    ],
 
-                    SizedBox(height: AppScale.dp(4)),
-
-                    PrimaryTextButton(
-                      text: 'Forgot password?',
-                      onPressed: () {
-                        debugPrint('tapped');
-                      },
-                    ),
-                    SizedBox(height: AppScale.dp(4)),
+                    SizedBox(height: AppScale.dp(!formState.isLogin ? 20 : 4)),
 
                     PrimaryButton(
-                      text: 'Sign Up',
-                      icon: Icons.login,
+                      text: formState.isLogin ? 'LogIn' : 'Sign Up',
+                      icon: formState.isLogin
+                          ? Icons.login
+                          : Icons.person_add_alt,
                       iconSize: 25,
                       vtPadding: 16,
                       textFont: 17,
-                      onPressed: () {},
+                      onPressed: form.validateForm,
                     ),
 
                     SizedBox(height: AppScale.dp(35)),
@@ -135,7 +133,10 @@ class _AuthScreenState extends State<AuthScreen> {
 
                     SizedBox(height: AppScale.dp(20)),
 
-                    const Footer(),
+                    Footer(
+                      isLogin: formState.isLogin,
+                      onPressed: form.onLoginToggle,
+                    ),
                   ],
                 ),
               ),

@@ -64,6 +64,17 @@ class AuthScreen extends ConsumerWidget {
 
                     SizedBox(height: AppScale.dp(16)),
 
+                    if (!formState.isLogin) ...[
+                      AppTextFormField(
+                        labelText: 'Phone number(+880)',
+                        controller: form.phoneController,
+                        focusNode: form.phoneFocus,
+                        errorText: formState.phoneError,
+                        onChanged: form.validatePhone,
+                      ),
+                      SizedBox(height: AppScale.dp(16)),
+                    ],
+
                     AppTextFormField(
                       labelText: 'Password',
                       controller: form.passController,

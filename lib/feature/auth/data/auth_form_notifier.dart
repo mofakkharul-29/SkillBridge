@@ -8,11 +8,13 @@ class AuthFormNotifier extends Notifier<AuthFormState> {
   late final TextEditingController _emailController;
   late final TextEditingController _passController;
   late final TextEditingController _confirmPassController;
+  late final TextEditingController _phoneController;
 
   late final FocusNode _nameFocus;
   late final FocusNode _emailFocus;
   late final FocusNode _passFocus;
   late final FocusNode _confirmPassFocus;
+  late final FocusNode _phoneFocus;
 
   @override
   AuthFormState build() {
@@ -20,20 +22,24 @@ class AuthFormNotifier extends Notifier<AuthFormState> {
     _emailController = TextEditingController();
     _passController = TextEditingController();
     _confirmPassController = TextEditingController();
+    _phoneController = TextEditingController();
     _nameFocus = FocusNode();
     _emailFocus = FocusNode();
     _passFocus = FocusNode();
     _confirmPassFocus = FocusNode();
+    _phoneFocus = FocusNode();
 
     ref.onDispose(() {
       _nameController.dispose();
       _emailController.dispose();
       _passController.dispose();
       _confirmPassController.dispose();
+      _phoneController.dispose();
       _nameFocus.dispose();
       _emailFocus.dispose();
       _passFocus.dispose();
       _confirmPassFocus.dispose();
+      _phoneFocus.dispose();
     });
 
     return AuthFormState();
@@ -59,6 +65,12 @@ class AuthFormNotifier extends Notifier<AuthFormState> {
         prevPass: _passController.text,
         curPass: conPassword,
       ),
+    );
+  }
+
+  void validatePhone(String phone) {
+    state = state.copyWith(
+      phoneError: ValidateHelper.validatePhone(phone: phone),
     );
   }
 
@@ -118,9 +130,11 @@ class AuthFormNotifier extends Notifier<AuthFormState> {
   TextEditingController get emailController => _emailController;
   TextEditingController get passController => _passController;
   TextEditingController get confirmPassController => _confirmPassController;
+  TextEditingController get phoneController => _phoneController;
 
   FocusNode get nameFocus => _nameFocus;
   FocusNode get emailFocus => _emailFocus;
   FocusNode get passFocus => _passFocus;
   FocusNode get confirmPassFocus => _confirmPassFocus;
+  FocusNode get phoneFocus => _phoneFocus;
 }

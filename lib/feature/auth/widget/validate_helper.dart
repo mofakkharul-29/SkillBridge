@@ -65,4 +65,21 @@ class ValidateHelper {
     }
     return null;
   }
+
+  static String? validatePhone({required String phone}) {
+    if (phone.isEmpty) {
+      return 'Phone number is required';
+    }
+
+    final cleaned = phone
+        .replaceAll(RegExp(r'[\s\-().+]'), '')
+        .replaceFirst(RegExp(r'^880'), '0');
+
+    final bdPhone = RegExp(r'^01[3-9]\d{8}$');
+    if (!bdPhone.hasMatch(cleaned)) {
+      return 'Enter a valid Bangladeshi phone number';
+    }
+
+    return null;
+  }
 }

@@ -1,14 +1,14 @@
-abstract class AppExceptions implements Exception {
+abstract class AppException implements Exception {
   final String code;
   final String message;
   final String userMessage;
 
-  const AppExceptions({
+  const AppException({
     required this.code,
     required this.message,
     required this.userMessage,
   });
 
   @override
-  String toString() => 'AppException($code): $message';
+  String toString() => 'Error($code): $message';
 }

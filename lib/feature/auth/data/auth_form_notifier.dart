@@ -87,17 +87,23 @@ class AuthFormNotifier extends Notifier<AuthFormState> {
             curPass: _confirmPassController.text,
           );
 
+    final phoneError = state.isLogin
+        ? null
+        : ValidateHelper.validatePhone(phone: _phoneController.text);
+
     final isFormValid =
         nameError == null &&
         emailError == null &&
         passwordError == null &&
-        confirmPasswordError == null;
+        confirmPasswordError == null &&
+        phoneError == null;
 
     state = state.copyWith(
       nameError: nameError,
       emailError: emailError,
       passwordError: passwordError,
       confirmPasswordError: confirmPasswordError,
+      phoneError: phoneError,
       isValid: isFormValid,
     );
   }
@@ -124,6 +130,10 @@ class AuthFormNotifier extends Notifier<AuthFormState> {
     state = state.copyWith(
       isConfirmPasswordVisible: !state.isConfirmPasswordVisible,
     );
+  }
+
+  void resetValid() {
+    state = state.copyWith(isValid: false);
   }
 
   TextEditingController get nameController => _nameController;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:skill_bridge/core/exceptions/app_exceptions.dart';
 import 'package:skill_bridge/core/theme/app_colors.dart';
 import 'package:skill_bridge/core/utils/app_scale.dart';
 import 'package:skill_bridge/core/utils/app_text_form_field.dart';
@@ -7,8 +8,12 @@ import 'package:skill_bridge/core/utils/custom_devider.dart';
 import 'package:skill_bridge/core/utils/global_text.dart';
 import 'package:skill_bridge/core/utils/primary_button.dart';
 import 'package:skill_bridge/core/utils/primary_text_button.dart';
+import 'package:skill_bridge/feature/auth/data/auth_form_notifier.dart';
+import 'package:skill_bridge/feature/auth/data/auth_form_state.dart';
+import 'package:skill_bridge/feature/auth/provider/auth_notifier_provider.dart';
 import 'package:skill_bridge/feature/auth/provider/form_notifier_provider.dart';
 import 'package:skill_bridge/feature/auth/widget/footer.dart';
+import 'package:skill_bridge/feature/modeSelector/provider/role_notifier_provider.dart';
 import 'package:skill_bridge/feature/splash/widgets/header_section.dart';
 
 class AuthScreen extends ConsumerWidget {
@@ -17,7 +22,27 @@ class AuthScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final formState = ref.watch(formNotifierProvider);
+    final isAuthLoading = ref.watch(authNotifierProvider).isLoading;
     final form = ref.read(formNotifierProvider.notifier);
+
+    ref.listen(formNotifierProvider, (previous, next) {
+      if (previous?.isValid == false && next.isValid == true) {
+        _handleAuth(context, ref, form, next);
+      }
+    });
+
+    ref.listen(authNotifierProvider, (previous, next) {
+      next.whenOrNull(
+        error: (e, _) {
+          final message = e is AppException
+              ? e.userMessage
+              : 'Something went wrong. Please try again.';
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(message), backgroundColor: Colors.red),
+          );
+        },
+      );
+    });
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor,
@@ -122,6 +147,7 @@ class AuthScreen extends ConsumerWidget {
                       iconSize: 25,
                       vtPadding: 16,
                       textFont: 17,
+                      isLoading: isAuthLoading,
                       onPressed: form.validateForm,
                     ),
 
@@ -156,5 +182,47 @@ class AuthScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  void _handleAuth(
+    BuildContext context,
+    WidgetRef ref,
+    AuthFormNotifier form,
+    AuthFormState formState,
+  ) {
+    final authNotifier = ref.read(authNotifierProvider.notifier);
+    if (formState.isLogin) {
+      authNotifier.loginWithEmailPassword(
+        email: form.emailController.text.trim(),
+        password: form.passController.text,
+      );
+      form.resetValid();
+    } else {
+      final roleState = ref.read(roleNotifierProvider);
+
+      roleState.whenOrNull(
+        data: (role) {
+          authNotifier.registerWithEmailPassword(
+            email: form.emailController.text.trim(),
+            password: form.passController.text,
+            fullName: form.nameController.text.trim(),
+            phoneNumber: form.phoneController.text.trim(),
+            role: role,
+          );
+          form.resetValid();
+        },
+        error: (e, _) {
+          form.resetValid();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Could not read your selected role. Please restart the app.',
+              ),
+              backgroundColor: Colors.red,
+            ),
+          );
+        },
+      );
+    }
   }
 }

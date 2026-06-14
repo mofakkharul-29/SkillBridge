@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:skill_bridge/core/enums/user_role.dart';
+import 'package:skill_bridge/core/exceptions/auth_exception.dart';
 import 'package:skill_bridge/feature/auth/model/app_user.dart';
 
 class AuthRepository {
@@ -20,9 +21,8 @@ class AuthRepository {
           .createUserWithEmailAndPassword(email: email, password: password);
 
       final User? user = credential.user;
-      if (user == null) {
-        throw Exception('account creation failed!');
-      }
+      if (user == null) throw AuthException.userCreationFailed();
+
       await user.updateDisplayName(fullName);
 
       final AppUser appUser = AppUser(
@@ -36,9 +36,11 @@ class AuthRepository {
       );
       return appUser;
     } on FirebaseAuthException catch (e) {
-      throw Exception(e.code);
+      throw _mapFirebaseAuthException(e);
+    } on AuthException {
+      rethrow;
     } catch (e) {
-      throw Exception(e);
+      throw AuthException.unknown(e.toString());
     }
   }
 
@@ -53,13 +55,27 @@ class AuthRepository {
       );
       final User? user = credential.user;
       if (user == null) {
-        throw Exception('log in failed!');
+        // throw AuthException.userCreationFailed();
+        throw AuthException.userNotFound();
       }
       return user.uid;
     } on FirebaseAuthException catch (e) {
-      throw Exception(e.code);
+      throw _mapFirebaseAuthException(e);
+    } on AuthException {
+      rethrow;
     } catch (e) {
-      throw Exception(e);
+      throw AuthException.unknown(e.toString());
     }
+  }
+
+  AuthException _mapFirebaseAuthException(FirebaseAuthException e) {
+    return switch (e.code) {
+      'email-already-in-use' => AuthException.emailAlreadyInUse(),
+      'invalid-credential' => AuthException.invalidCredential(),
+      'user-not-found' => AuthException.userNotFound(),
+      'weak-password' => AuthException.weakPassword(),
+      'network-request-failed' => AuthException.networkError(),
+      _ => AuthException.unknown(e.code),
+    };
   }
 }

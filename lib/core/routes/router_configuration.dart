@@ -5,6 +5,7 @@ import 'package:skill_bridge/core/enums/user_role.dart';
 import 'package:skill_bridge/core/routes/route_names.dart';
 import 'package:skill_bridge/core/routes/router_listenable.dart';
 import 'package:skill_bridge/feature/auth/presentation/auth_screen.dart';
+import 'package:skill_bridge/feature/auth/provider/auth_state_provider.dart';
 import 'package:skill_bridge/feature/home/presentation/home_screen.dart';
 import 'package:skill_bridge/feature/modeSelector/presentation/mode_selector.dart';
 import 'package:skill_bridge/feature/modeSelector/provider/role_notifier_provider.dart';
@@ -51,11 +52,12 @@ class RouterConfiguration {
           return loc == '/role' ? null : '/role';
         }
 
-        final isAuthenticated = false; // remove this later
+        final isAuthenticated = ref.read(authStateProvider).value ?? false;
 
         if (!isAuthenticated) {
           return loc == '/auth' ? null : '/auth';
         }
+        return loc == '/home' ? null : '/home';
       },
 
       routes: <RouteBase>[

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skill_bridge/core/enums/user_role.dart';
+import 'package:skill_bridge/core/exceptions/app_exceptions.dart';
 import 'package:skill_bridge/feature/auth/data/repository/auth_repository.dart';
 import 'package:skill_bridge/feature/auth/data/repository/user_repository.dart';
 import 'package:skill_bridge/feature/auth/model/app_user.dart';
@@ -38,8 +39,10 @@ class AuthNotifier extends AsyncNotifier<AppUser?> {
       );
       await _repository.writeUser(user: user);
       state = AsyncData(user);
-    } catch (e) {
-      state = AsyncError(e, StackTrace.current);
+    } on AppException catch (e, st) {
+      state = AsyncError(e, st);
+    } catch (e, st) {
+      state = AsyncError(e, st);
     }
   }
 
@@ -55,8 +58,10 @@ class AuthNotifier extends AsyncNotifier<AppUser?> {
       );
       final AppUser user = await _repository.readUser(uid: uid);
       state = AsyncData(user);
-    } catch (e) {
-      state = AsyncError(e, StackTrace.current);
+    } on AppException catch (e, st) {
+      state = AsyncError(e, st);
+    } catch (e, st) {
+      state = AsyncError(e, st);
     }
   }
 }

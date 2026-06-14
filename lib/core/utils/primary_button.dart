@@ -14,6 +14,7 @@ class PrimaryButton extends StatelessWidget {
   final Color? backgroundColor;
   final Color? foregroundColor;
   final bool isPrefixNeed;
+  final bool isLoading;
 
   const PrimaryButton({
     super.key,
@@ -27,12 +28,13 @@ class PrimaryButton extends StatelessWidget {
     this.backgroundColor = AppColors.kPrimary,
     this.foregroundColor = Colors.white,
     this.isPrefixNeed = false,
+    this.isLoading = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: onPressed,
+      onPressed: isLoading ? null : onPressed,
       style: ElevatedButton.styleFrom(
         alignment: Alignment.center,
         foregroundColor: foregroundColor,
@@ -42,34 +44,47 @@ class PrimaryButton extends StatelessWidget {
         ),
         padding: EdgeInsets.symmetric(vertical: AppScale.dp(vtPadding)),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          isPrefixNeed
-              ? Image.asset(
-                  'assets/images/google.png',
-                  fit: BoxFit.contain,
-                  height: AppScale.dp(22),
-                  width: AppScale.dp(22),
-                )
-              : const SizedBox.shrink(),
+      child: isLoading
+          ? Center(
+              child: SizedBox(
+                height: AppScale.dp(22),
+                width: AppScale.dp(22),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  color: foregroundColor,
+                ),
+              ),
+            )
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                isPrefixNeed
+                    ? Image.asset(
+                        'assets/images/google.png',
+                        fit: BoxFit.contain,
+                        height: AppScale.dp(22),
+                        width: AppScale.dp(22),
+                      )
+                    : const SizedBox.shrink(),
 
-          isPrefixNeed ? SizedBox(width: AppScale.dp(15)) : SizedBox.shrink(),
+                isPrefixNeed
+                    ? SizedBox(width: AppScale.dp(15))
+                    : SizedBox.shrink(),
 
-          GlobalText(
-            text: text,
-            fontSize: AppScale.sp(textFont),
-            height: 1.2,
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w600,
-          ),
-          SizedBox(width: AppScale.dp(10)),
-          isNeed
-              ? Icon(icon, size: AppScale.sp(iconSize))
-              : const SizedBox.shrink(),
-        ],
-      ),
+                GlobalText(
+                  text: text,
+                  fontSize: AppScale.sp(textFont),
+                  height: 1.2,
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w600,
+                ),
+                SizedBox(width: AppScale.dp(10)),
+                isNeed
+                    ? Icon(icon, size: AppScale.sp(iconSize))
+                    : const SizedBox.shrink(),
+              ],
+            ),
     );
   }
 }
